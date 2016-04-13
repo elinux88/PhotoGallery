@@ -1,5 +1,6 @@
 package site.elioplasma.ecook.photogallery;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -112,18 +113,29 @@ public class PhotoGalleryFragment extends Fragment {
         }
     }
 
-    private class PhotoHolder extends RecyclerView.ViewHolder {
+    private class PhotoHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        private GalleryItem mGalleryItem;
         private ImageView mItemImageView;
 
         public PhotoHolder(View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
 
             mItemImageView = (ImageView) itemView
                     .findViewById(R.id.fragment_photo_gallery_image_view);
         }
 
         public void bindGalleryItem(GalleryItem item) {
+            mGalleryItem = item;
             Picasso.with(getActivity()).load(item.getUrl()).into(mItemImageView);
+            GalleryItemData.get(getActivity()).addGalleryItem(item);
+        }
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = GalleryItemActivity.newIntent(getActivity(), mGalleryItem.getId());
+            startActivity(intent);
         }
     }
 

@@ -4,4 +4,5 @@
     <string name="search">Search</string>
     <string name="action_refresh">Refresh Images</string>
     <string name="clear_search">Clear Search</string>
+    <string name="url_here">Url Here</string>
 </resources>
