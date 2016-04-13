@@ -22,7 +22,7 @@ public class FlickrFetchr {
 
     private static final String TAG = "FlickrFetchr";
 
-    private static final String API_KEY = "cca204e033ab04fb08b95619426a3f1a";
+    private static final String API_KEY = KeyHolder.getApiKey();
     private static final String FETCH_RECENTS_METHOD = "flickr.photos.getRecent";
     private static final String SEARCH_METHOD = "flickr.photos.search";
     private static final String GET_SIZES = "flickr.photos.getSizes";
