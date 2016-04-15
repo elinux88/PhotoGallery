@@ -5,4 +5,5 @@
     <string name="action_refresh">Refresh Images</string>
     <string name="clear_search">Clear Search</string>
     <string name="url_here">Url Here</string>
+    <string name="find_local">Find Local Photos</string>
 </resources>
