@@ -36,4 +36,5 @@ captures/
 *.iml
 .idea/workspace.xml
 .idea/libraries
+app/src/main/java/site/elioplasma/ecook/photogallery/KeyHolder.java
 
