@@ -31,10 +31,9 @@ import java.util.List;
 
 /**
  * Created by eli on 3/29/16.
+ * Updated by eli on 11/10/16.
  */
 public class PhotoGalleryFragment extends Fragment {
-
-    private static final String TAG = "PhotoGalleryFragment";
 
     private RecyclerView mPhotoRecyclerView;
     private List<GalleryItem> mItems = new ArrayList<>();
@@ -164,7 +163,7 @@ public class PhotoGalleryFragment extends Fragment {
         private GalleryItem mGalleryItem;
         private ImageView mItemImageView;
 
-        public PhotoHolder(View itemView) {
+        PhotoHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
 
@@ -172,7 +171,7 @@ public class PhotoGalleryFragment extends Fragment {
                     .findViewById(R.id.fragment_photo_gallery_image_view);
         }
 
-        public void bindGalleryItem(GalleryItem item) {
+        void bindGalleryItem(GalleryItem item) {
             mGalleryItem = item;
             Picasso.with(getActivity()).load(item.getUrl()).into(mItemImageView);
             GalleryItemData.get(getActivity()).addGalleryItem(item);
@@ -189,7 +188,7 @@ public class PhotoGalleryFragment extends Fragment {
 
         private List<GalleryItem> mGalleryItems;
 
-        public PhotoAdapter(List<GalleryItem> galleryItems) {
+        PhotoAdapter(List<GalleryItem> galleryItems) {
             mGalleryItems = galleryItems;
         }
 
@@ -247,7 +246,7 @@ public class PhotoGalleryFragment extends Fragment {
     private class FetchItemsTask extends AsyncTask<Void, Void, List<GalleryItem>> {
         private String mQuery;
 
-        public FetchItemsTask(String query) {
+        FetchItemsTask(String query) {
             mQuery = query;
         }
 

@@ -4,7 +4,9 @@
     <string name="search">Search</string>
     <string name="action_refresh">Refresh Images</string>
     <string name="clear_search">Clear Search</string>
-    <string name="caption_here">Caption Here</string>
-    <string name="url_here">Url Here</string>
     <string name="find_local">Find Local Photos</string>
+    <string name="photo_url">&lt;Photo Url&gt;</string>
+    <string name="photo_image">&lt;Photo Image&gt;</string>
+    <string name="photo_owner">&lt;Photo Owner&gt;</string>
+    <string name="photo_title">&lt;Photo Title&gt;</string>
 </resources>

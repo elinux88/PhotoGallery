@@ -2,24 +2,14 @@ package site.elioplasma.ecook.photogallery;
 
 /**
  * Created by eli on 3/29/16.
+ * Updated by eli on 11/10/16.
  */
-public class GalleryItem {
-    private String mCaption;
+class GalleryItem {
     private String mId;
+    private String mTitle;
     private String mUrl;
-
-    @Override
-    public String toString() {
-        return mCaption;
-    }
-
-    public String getCaption() {
-        return mCaption;
-    }
-
-    public void setCaption(String caption) {
-        mCaption = caption;
-    }
+    private String mOwnerId;
+    private String mOwnerName;
 
     public String getId() {
         return mId;
@@ -29,11 +19,39 @@ public class GalleryItem {
         mId = id;
     }
 
-    public String getUrl() {
+    public String toString() {
+        return mTitle;
+    }
+
+    String getTitle() {
+        return mTitle;
+    }
+
+    void setTitle(String title) {
+        mTitle = title;
+    }
+
+    String getUrl() {
         return mUrl;
     }
 
-    public void setUrl(String url) {
+    void setUrl(String url) {
         mUrl = url;
+    }
+
+    String getOwnerId() {
+        return mOwnerId;
+    }
+
+    void setOwnerId(String ownerId) {
+        mOwnerId = ownerId;
+    }
+
+    String getOwnerName() {
+        return mOwnerName;
+    }
+
+    void setOwnerName(String ownerName) {
+        mOwnerName = ownerName;
     }
 }

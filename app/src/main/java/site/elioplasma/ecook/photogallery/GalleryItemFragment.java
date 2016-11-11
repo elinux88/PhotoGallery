@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,14 +18,11 @@ import com.squareup.picasso.Picasso;
  */
 public class GalleryItemFragment extends Fragment {
 
-    private static final String TAG = "GalleryItemFragment";
-
     private static final String ARG_ITEM_ID = "item_id";
 
     private GalleryItem mGalleryItem;
-    private ImageView mPhoto;
-    private TextView mCaptionTextView;
-    private TextView mUrlTextView;
+    private ImageView mPhotoImage;
+    private TextView mPhotoOwnerTextView;
 
     public static GalleryItemFragment newInstance(String itemId) {
         Bundle args = new Bundle();
@@ -45,6 +41,7 @@ public class GalleryItemFragment extends Fragment {
 
         mGalleryItem = GalleryItemData.get(getActivity()).getGalleryItem(itemId);
         new FetchItemTask(mGalleryItem.getId()).execute();
+        new FetchOwnerTask(mGalleryItem.getOwnerId()).execute();
     }
 
     @Nullable
@@ -53,14 +50,16 @@ public class GalleryItemFragment extends Fragment {
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_gallery_item, container, false);
 
-        mPhoto = (ImageView) v.findViewById(R.id.gallery_item_photo);
-        mCaptionTextView = (TextView) v.findViewById(R.id.gallery_item_caption);
-        mUrlTextView = (TextView) v.findViewById(R.id.gallery_item_url);
+        mPhotoImage = (ImageView) v.findViewById(R.id.gallery_item_photo);
+        mPhotoOwnerTextView = (TextView) v.findViewById(R.id.gallery_item_owner);
+        TextView photoTitleTextView = (TextView) v.findViewById(R.id.gallery_item_title);
+        TextView photoUrlTextView = (TextView) v.findViewById(R.id.gallery_item_url);
 
-        mCaptionTextView.setText(mGalleryItem.getCaption());
-        mUrlTextView.setText(mGalleryItem.getUrl());
+        mPhotoOwnerTextView.setText(mGalleryItem.getOwnerName());
+        photoTitleTextView.setText(mGalleryItem.getTitle());
+        photoUrlTextView.setText(mGalleryItem.getUrl());
 
-        Picasso.with(getActivity()).load(mGalleryItem.getUrl()).into(mPhoto);
+        Picasso.with(getActivity()).load(mGalleryItem.getUrl()).into(mPhotoImage);
 
         return v;
     }
@@ -68,7 +67,7 @@ public class GalleryItemFragment extends Fragment {
     private class FetchItemTask extends AsyncTask<Void,Void, String> {
         private String mId;
 
-        public FetchItemTask(String id) {
+        FetchItemTask(String id) {
             mId = id;
         }
 
@@ -80,8 +79,26 @@ public class GalleryItemFragment extends Fragment {
         @Override
         protected void onPostExecute(String photoUrl) {
             mGalleryItem.setUrl(photoUrl);
-            mUrlTextView.setText(photoUrl);
-            Picasso.with(getActivity()).load(mGalleryItem.getUrl()).into(mPhoto);
+            Picasso.with(getActivity()).load(mGalleryItem.getUrl()).into(mPhotoImage);
+        }
+    }
+
+    private class FetchOwnerTask extends AsyncTask<Void,Void, String> {
+        private String mId;
+
+        FetchOwnerTask(String id) {
+            mId = id;
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            return new FlickrFetchr().getOwnerName(mId);
+        }
+
+        @Override
+        protected void onPostExecute(String ownerName) {
+            mGalleryItem.setOwnerName(ownerName);
+            mPhotoOwnerTextView.setText(ownerName);
         }
     }
 }

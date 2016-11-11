@@ -18,8 +18,9 @@ import java.util.List;
 
 /**
  * Created by eli on 3/29/16.
+ * Updated by eli on 11/10/16.
  */
-public class FlickrFetchr {
+class FlickrFetchr {
 
     private static final String TAG = "FlickrFetchr";
 
@@ -27,6 +28,7 @@ public class FlickrFetchr {
     private static final String FETCH_RECENTS_METHOD = "flickr.photos.getRecent";
     private static final String SEARCH_METHOD = "flickr.photos.search";
     private static final String GET_SIZES = "flickr.photos.getSizes";
+    private static final String GET_USER_INFO = "flickr.people.getInfo";
     private static final Uri ENDPOINT = Uri
             .parse("https://api.flickr.com/services/rest/")
             .buildUpon()
@@ -39,7 +41,7 @@ public class FlickrFetchr {
     // urs_s --> small square 75x75
     // urs_q --> large square 150x150
 
-    public byte[] getUrlBytes(String urlSpec) throws IOException {
+    private byte[] getUrlBytes(String urlSpec) throws IOException {
         URL url = new URL(urlSpec);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
@@ -53,7 +55,7 @@ public class FlickrFetchr {
                         urlSpec);
             }
 
-            int bytesRead = 0;
+            int bytesRead;
             byte[] buffer = new byte[1024];
             while ((bytesRead = in.read(buffer)) > 0) {
                 out.write(buffer, 0, bytesRead);
@@ -65,31 +67,36 @@ public class FlickrFetchr {
         }
     }
 
-    public String getUrlString(String urlSpec) throws IOException {
+    private String getUrlString(String urlSpec) throws IOException {
         return new String(getUrlBytes(urlSpec));
     }
 
-    public List<GalleryItem> fetchRecentPhotos() {
+    List<GalleryItem> fetchRecentPhotos() {
         String url = buildUrl(FETCH_RECENTS_METHOD, null);
         return downloadGalleryItems(url);
     }
 
-    public List<GalleryItem> searchPhotos(String query) {
+    List<GalleryItem> searchPhotos(String query) {
         String url = buildUrl(SEARCH_METHOD, query);
         return downloadGalleryItems(url);
     }
 
-    public List<GalleryItem> searchPhotos(Location location) {
+    List<GalleryItem> searchPhotos(Location location) {
         String url = buildUrl(location);
         return downloadGalleryItems(url);
     }
 
-    public String getPhotoUrl(String id) {
+    String getPhotoUrl(String id) {
         String url = buildUrl(GET_SIZES, id);
         return downloadPhotoUrl(url);
     }
 
-    public List<GalleryItem> downloadGalleryItems(String url) {
+    String getOwnerName(String ownerId) {
+        String url = buildUrl(GET_USER_INFO, ownerId);
+        return downloadUserInfo(url);
+    }
+
+    private List<GalleryItem> downloadGalleryItems(String url) {
 
         List<GalleryItem> items = new ArrayList<>();
 
@@ -107,7 +114,7 @@ public class FlickrFetchr {
         return items;
     }
 
-    public String downloadPhotoUrl(String url) {
+    private String downloadPhotoUrl(String url) {
 
         StringBuilder photoUrl = new StringBuilder();
 
@@ -120,10 +127,29 @@ public class FlickrFetchr {
         } catch (JSONException je) {
             Log.e(TAG, "Failed to parse JSON", je);
         } catch (IOException ioe) {
-            Log.e(TAG, "Failed to fetch items", ioe);
+            Log.e(TAG, "Failed to fetch photo url", ioe);
         }
 
         return photoUrl.toString();
+    }
+
+    private String downloadUserInfo(String url) {
+
+        String userInfo = "";
+
+        try {
+            Log.i(TAG, "URL: " + url);
+            String jsonString = getUrlString(url);
+            Log.i(TAG, "Received JSON: " + jsonString);
+            JSONObject jsonBody = new JSONObject(jsonString);
+            userInfo = parseUserInfo(jsonBody);
+        } catch (JSONException je) {
+            Log.e(TAG, "Failed to parse JSON", je);
+        } catch (IOException ioe) {
+            Log.e(TAG, "Failed to fetch user info", ioe);
+        }
+
+        return userInfo;
     }
 
     private String buildUrl(String method, String extra) {
@@ -136,6 +162,10 @@ public class FlickrFetchr {
 
         if (method.equals(GET_SIZES)) {
             uriBuilder.appendQueryParameter("photo_id", extra);
+        }
+
+        if (method.equals(GET_USER_INFO)) {
+            uriBuilder.appendQueryParameter("user_id", extra);
         }
 
         return uriBuilder.build().toString();
@@ -160,7 +190,8 @@ public class FlickrFetchr {
 
             GalleryItem item = new GalleryItem();
             item.setId(photoJsonObject.getString("id"));
-            item.setCaption(photoJsonObject.getString("title"));
+            item.setOwnerId(photoJsonObject.getString("owner"));
+            item.setTitle(photoJsonObject.getString("title"));
 
             if (!photoJsonObject.has("url_s")) {
                 continue;
@@ -192,5 +223,13 @@ public class FlickrFetchr {
         }
 
         photoUrl.append(url);
+    }
+
+    private String parseUserInfo(JSONObject jsonBody)
+            throws IOException, JSONException {
+
+        JSONObject userJsonObject = jsonBody.getJSONObject("person");
+        JSONObject nameJsonObject = userJsonObject.getJSONObject("username");
+        return nameJsonObject.getString("_content");
     }
 }
