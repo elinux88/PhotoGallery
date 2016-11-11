@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso;
 
 /**
  * Created by eli on 4/12/16.
+ * Updated by eli on 11/10/16.
  */
 public class GalleryItemFragment extends Fragment {
 
@@ -24,6 +25,7 @@ public class GalleryItemFragment extends Fragment {
 
     private GalleryItem mGalleryItem;
     private ImageView mPhoto;
+    private TextView mCaptionTextView;
     private TextView mUrlTextView;
 
     public static GalleryItemFragment newInstance(String itemId) {
@@ -52,7 +54,10 @@ public class GalleryItemFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_gallery_item, container, false);
 
         mPhoto = (ImageView) v.findViewById(R.id.gallery_item_photo);
+        mCaptionTextView = (TextView) v.findViewById(R.id.gallery_item_caption);
         mUrlTextView = (TextView) v.findViewById(R.id.gallery_item_url);
+
+        mCaptionTextView.setText(mGalleryItem.getCaption());
         mUrlTextView.setText(mGalleryItem.getUrl());
 
         Picasso.with(getActivity()).load(mGalleryItem.getUrl()).into(mPhoto);
